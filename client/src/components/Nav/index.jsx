@@ -10,6 +10,7 @@ import { Panel, Spinner } from '~/components';
 import { cn } from '~/utils/';
 import { useAuthContext, useDebounce } from '~/hooks';
 import store from '~/store';
+import { PdfAssistant } from '../pdf-assistant/PdfAssistant';
 
 export default function Nav({ navVisible, setNavVisible }) {
   const [isHovering, setIsHovering] = useState(false);
@@ -181,6 +182,11 @@ export default function Nav({ navVisible, setNavVisible }) {
                     />
                   </div>
                 </div>
+
+                <div className="flex flex-1 items-center justify-center overflow-y-hidden border-b border-white/20 py-2 text-white">
+                  <PdfAssistant userId="1" />
+                </div>
+
                 <NavLinks clearSearch={clearSearch} isSearchEnabled={isSearchEnabled} />
               </nav>
             </div>
@@ -201,7 +207,6 @@ export default function Nav({ navVisible, setNavVisible }) {
           </button>
         </div>
       )}
-
       <div className={'nav-mask' + (navVisible ? ' active' : '')} onClick={toggleNavVisible}></div>
     </>
   );

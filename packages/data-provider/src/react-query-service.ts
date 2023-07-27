@@ -390,8 +390,8 @@ export const useUploadPdfsMutation = (): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation(({ userId, files }) => dataService.uploadPdfs(userId, files), {
-    onSuccess: () => {
-      queryClient.invalidateQueries([QueryKeys.raPdfList]);
+    onSuccess: (data: t.TPdf[], { userId }) => {
+      queryClient.setQueryData([QueryKeys.raPdfList, userId], data);
     },
   });
 };
