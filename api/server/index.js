@@ -85,6 +85,7 @@ config.validate(); // Validate the config
   app.use('/api/endpoints', routes.endpoints);
   app.use('/api/plugins', routes.plugins);
   app.use('/api/config', routes.config);
+  app.use('/api/ra', routes.ra);
 
   // static files
   app.get('/*', function (req, res) {
