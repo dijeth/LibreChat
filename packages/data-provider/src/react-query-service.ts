@@ -21,6 +21,8 @@ export enum QueryKeys {
   tokenCount = 'tokenCount',
   availablePlugins = 'availablePlugins',
   startupConfig = 'startupConfig',
+  raUserInfo = 'raUserInfo',
+  raPdfList = 'raPdfList',
 }
 
 export const useAbortRequestWithMessage = (): UseMutationResult<
@@ -359,4 +361,37 @@ export const useGetStartupConfig = (): QueryObserverResult<t.TStartupConfig> => 
       refetchOnMount: false,
     },
   );
+};
+
+// ResearchAssistant Queries
+export const useGetUserInfoQuery = (userId: string): QueryObserverResult<t.TUserInfo> => {
+  return useQuery([QueryKeys.raUserInfo, userId], () => dataService.userInfo(userId), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    retry: false,
+  });
+};
+
+export const useGetPdfListQuery = (userId: string): QueryObserverResult<t.TPdf[]> => {
+  return useQuery([QueryKeys.raPdfList, userId], () => dataService.pdfList(userId), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    retry: false,
+  });
+};
+
+export const useUploadPdfsMutation = (): UseMutationResult<
+  t.TPdf[],
+  unknown,
+  { userId: string; files: File[] }
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation(({ userId, files }) => dataService.uploadPdfs(userId, files), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.raPdfList]);
+    },
+  });
 };

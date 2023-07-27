@@ -93,3 +93,25 @@ export const plugins = () => {
 export const config = () => {
   return '/api/config';
 };
+
+// Endpoints of Research Assistant
+
+export const userInfo = (userId: string): string => {
+  return `/api/ra/user/${userId}`;
+};
+
+export const pdfList = (userId: string): string => {
+  return `/api/ra/pdf/list/${userId}`;
+};
+
+export const uploadPdfs = (): string => {
+  return '/api/ra/pdf/upload';
+};
+
+export const deletePdfs = (): string => {
+  return '/api/ra/pdf/delete';
+};
+
+export const updatePdf = (pdfId: string): string => {
+  return `/api/ra/pdf/${pdfId}/update`;
+};

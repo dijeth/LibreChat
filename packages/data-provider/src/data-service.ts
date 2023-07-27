@@ -117,3 +117,25 @@ export const updateUserPlugins = (payload: t.TUpdateUserPlugins) => {
 export const getStartupConfig = (): Promise<t.TStartupConfig> => {
   return request.get(endpoints.config());
 };
+
+// Helpers of ResearchAssistant
+
+export const userInfo = (userId: string): Promise<t.TUserInfo> =>
+  request.get(endpoints.userInfo(userId));
+
+export const pdfList = (userId: string): Promise<t.TPdf[]> =>
+  request.get(endpoints.pdfList(userId));
+
+export const uploadPdfs = (userId: string, files: File[]): Promise<t.TPdf[]> => {
+  const formData = new FormData();
+  formData.append('userId', userId);
+  files.forEach((it) => formData.append('files', it));
+
+  return request.postMultiPart(endpoints.uploadPdfs(), formData);
+};
+
+export const deletePdfs = (payload: t.TPdfListPayload): Promise<t.TPdf[]> =>
+  request.post(endpoints.deletePdfs(), payload);
+
+export const updatePdf = (payload: t.TPdf): Promise<t.TPdf> =>
+  request.post(endpoints.updatePdf(payload.id), payload);

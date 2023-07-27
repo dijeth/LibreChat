@@ -267,3 +267,25 @@ export type TRefreshTokenResponse = {
 export type TRequestPasswordResetResponse = {
   link: string;
 };
+
+// Types of ResearchAssistant
+
+export type TUserInfo = {
+  id: string;
+  organizationId: string;
+  maxPdfCount: number;
+};
+
+export type TPdf = {
+  id: string;
+  userId: string;
+  filename: string;
+  author?: string;
+  articleName?: string;
+  tag?: string;
+};
+
+export type TPdfListPayload = {
+  userId: string;
+  pdfList: TPdf[];
+};
