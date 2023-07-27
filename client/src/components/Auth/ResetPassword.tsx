@@ -7,7 +7,7 @@ import store from '~/store';
 import { localize } from '~/localization/Translation';
 
 function ResetPassword() {
-  const lang = useRecoilValue(store.lang);
+  const lang = useRecoilValue<string>(store.lang);
   const {
     register,
     handleSubmit,

@@ -3,7 +3,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
+    // "allowJs": true,
     "skipLibCheck": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -24,7 +24,7 @@
     }
   },
   "types": ["node", "jest", "@testing-library/jest-dom"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
   "include": [
     "src/**/*",
     "../e2e/**/*",
