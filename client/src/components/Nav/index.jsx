@@ -11,9 +11,9 @@ import { cn } from '~/utils/';
 import { useAuthContext, useDebounce } from '~/hooks';
 import store from '~/store';
 import { PdfAssistant } from '../pdf-assistant/PdfAssistant';
+import { Scrollbar } from '../ui/Scrollbar';
 
 export default function Nav({ navVisible, setNavVisible }) {
-  const [isHovering, setIsHovering] = useState(false);
   const { isAuthenticated } = useAuthContext();
   const containerRef = useRef(null);
   const scrollPositionRef = useRef(null);
@@ -156,14 +156,8 @@ export default function Nav({ navVisible, setNavVisible }) {
                     <Panel open={false} />
                   </button>
                 </div>
-                <div
-                  className={`flex-1 flex-col overflow-y-auto ${
-                    isHovering ? '' : 'scrollbar-transparent'
-                  } border-b border-white/20`}
-                  onMouseEnter={() => setIsHovering(true)}
-                  onMouseLeave={() => setIsHovering(false)}
-                  ref={containerRef}
-                >
+
+                <Scrollbar className="flex-1 flex-col border-b border-white/20">
                   <div className={containerClasses}>
                     {(getConversationsQuery.isLoading && pageNumber === 1) || isFetching ? (
                       <Spinner />
@@ -181,7 +175,7 @@ export default function Nav({ navVisible, setNavVisible }) {
                       previousPage={previousPage}
                     />
                   </div>
-                </div>
+                </Scrollbar>
 
                 <div className="flex flex-1 items-center justify-center overflow-y-hidden border-b border-white/20 py-2 text-white">
                   <PdfAssistant userId="1" />

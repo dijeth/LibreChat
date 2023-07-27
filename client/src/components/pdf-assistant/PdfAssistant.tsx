@@ -7,6 +7,7 @@ import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import { Spinner } from '../svg';
 import { PdfFile } from './PdfFile';
 import PlusIcon from '../svg/PlusIcon';
+import { Scrollbar } from '../ui/Scrollbar';
 
 const PdfAssistantState = {
   LOADING: 'loading',
@@ -24,7 +25,6 @@ type PdfAssistantProps = {
 
 export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
-  const [isHovering, setIsHovering] = useState(false);
 
   const pdfListQuery = useGetPdfListQuery(userId);
   const userInfoQuery = useGetUserInfoQuery(userId);
@@ -64,7 +64,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   }
 
   return (
-    <div className="flex h-full flex-col items-start justify-start gap-2 text-sm text-gray-100">
+    <div className="flex h-full w-full flex-col items-start justify-start gap-2 text-sm text-gray-100">
       <form className="w-full">
         <label
           htmlFor="pdf"
@@ -82,19 +82,15 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
           onChange={handleUpload}
         />
       </form>
-      <div
-        className={`w-full overflow-y-auto ${isHovering ? '' : 'scrollbar-transparent'}`}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
+      <Scrollbar>
         <ul className="px-3">
           {pdfListQuery.data?.map(({ id, filename }) => (
-            <li className="py-5" key={id}>
+            <li className="py-2" key={id}>
               <PdfFile filename={filename} />
             </li>
           ))}
         </ul>
-      </div>
+      </Scrollbar>
     </div>
   );
 };
