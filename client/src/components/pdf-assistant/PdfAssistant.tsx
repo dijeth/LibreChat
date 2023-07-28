@@ -5,9 +5,9 @@ import {
 } from '@librechat/data-provider/src/react-query-service';
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import { Spinner } from '../svg';
-import { PdfFile } from './PdfFile';
 import { Scrollbar } from '../ui/Scrollbar';
-import { UploadIcon } from 'lucide-react';
+import { FileTextIcon, UploadIcon } from 'lucide-react';
+import { ListItem } from '../ui/ListItem';
 
 const PdfAssistantState = {
   LOADING: 'loading',
@@ -25,10 +25,19 @@ type PdfAssistantProps = {
 
 export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const pdfListQuery = useGetPdfListQuery(userId);
   const userInfoQuery = useGetUserInfoQuery(userId);
   const uploadPdfsMutation = useUploadPdfsMutation();
+
+  const toggleSelected = (id: string) => {
+    if (selected.includes(id)) {
+      setSelected(selected.filter((it) => it !== id));
+    } else {
+      setSelected([...selected, id]);
+    }
+  };
 
   useEffect(() => {
     const statuses = [pdfListQuery.status, userInfoQuery.status, uploadPdfsMutation.status];
@@ -70,7 +79,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
           htmlFor="pdf"
           className="mb-2 flex h-11 flex-shrink-0 flex-grow cursor-pointer items-center gap-3 rounded-md border border-white/20 px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
         >
-          <UploadIcon strokeWidth={2} />
+          <UploadIcon size={20} strokeWidth={2} />
           Upload a PDF
         </label>
         <input
@@ -83,10 +92,15 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
         />
       </form>
       <Scrollbar>
-        <ul className="w-[243px]">
+        <ul>
           {pdfListQuery.data?.map(({ id, filename }) => (
             <li className="py-2" key={id}>
-              <PdfFile filename={filename} />
+              <ListItem
+                title={filename}
+                MainIcon={FileTextIcon}
+                selected={selected.includes(id)}
+                onSelect={() => toggleSelected(id)}
+              />
             </li>
           ))}
         </ul>
