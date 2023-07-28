@@ -6,8 +6,8 @@ import {
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import { Spinner } from '../svg';
 import { PdfFile } from './PdfFile';
-import PlusIcon from '../svg/PlusIcon';
 import { Scrollbar } from '../ui/Scrollbar';
+import { UploadIcon } from 'lucide-react';
 
 const PdfAssistantState = {
   LOADING: 'loading',
@@ -70,7 +70,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
           htmlFor="pdf"
           className="mb-2 flex h-11 flex-shrink-0 flex-grow cursor-pointer items-center gap-3 rounded-md border border-white/20 px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
         >
-          <PlusIcon />
+          <UploadIcon strokeWidth={2} />
           Upload a PDF
         </label>
         <input
@@ -83,7 +83,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
         />
       </form>
       <Scrollbar>
-        <ul className="px-3">
+        <ul className="w-[243px]">
           {pdfListQuery.data?.map(({ id, filename }) => (
             <li className="py-2" key={id}>
               <PdfFile filename={filename} />
