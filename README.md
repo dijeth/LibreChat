@@ -1,3 +1,27 @@
+# Research Assistant API
+GET `api/ra/user/:userId`
+returns json `{id: string; organizationId: string; maxPdfCount: number;}`
+
+
+GET `api/ra/pdf/list/:userId` 
+returns json `{id: string; userId: string; filename: string; author: string; articleName: string; tag: string; }[]` (*)
+
+
+POST `api/ra/pdf/upload`
+recieves multipart/form-data `{userId: string; files: File[]}`
+returns json (*)
+
+
+DELETE `api/ra/pdf/delete?userId=123&pdfIds=1&pdfIds=2...` 
+returns json (*)
+
+
+PATCH `api/ra/pdf/update` 
+recieves json `{userId: string; pdf: {id: string; userId: string; filename: string; author: string; articleName: string; tag: string; }}`
+returns json (*)
+
+
+
 <p align="center">
   <a href="https://docs.librechat.ai">
     <img src="docs/assets/LibreChat.svg" height="256">
