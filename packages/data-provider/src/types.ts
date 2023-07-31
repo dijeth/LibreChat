@@ -284,8 +284,3 @@ export type TPdf = {
   articleName?: string;
   tag?: string;
 };
-
-export type TPdfListPayload = {
-  userId: string;
-  pdfList: TPdf[];
-};

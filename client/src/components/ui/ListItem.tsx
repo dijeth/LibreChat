@@ -5,23 +5,25 @@ import {
   EventHandler,
   KeyboardEventHandler,
   MouseEventHandler,
+  KeyboardEvent,
 } from 'react';
 import { LucideIcon } from 'lucide-react';
 import { CheckMark, RenameIcon, TrashIcon, CrossIcon } from '../svg';
+import { TPdf } from '@librechat/data-provider/src/types';
 
 type ListItemProps = {
   title: string;
   selected?: boolean;
   MainIcon: LucideIcon;
   onDelele?: () => void;
-  onRename?: () => void;
+  onRename?: (title: TPdf['filename']) => void;
   onSelect?: () => void;
 };
 
 const getPreventHandler = <T extends Event, K extends EventHandler<any>>(handler: Function): K => {
   return ((event: T) => {
     event.preventDefault();
-    handler();
+    handler(event);
   }) as K;
 };
 
@@ -56,10 +58,10 @@ export const ListItem = ({
     if (titleInput === title) {
       return;
     }
-    onRename && onRename();
+    onRename && onRename(titleInput);
   };
 
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       onFinishRename();
     }
@@ -77,9 +79,11 @@ export const ListItem = ({
             type="text"
             className="m-0 mr-0 w-full border border-blue-500 bg-transparent p-0 text-sm leading-tight outline-none"
             value={titleInput}
-            onChange={(e) => setTitleInput(e.target.value)}
+            onChange={(e) => {
+              setTitleInput(e.target.value);
+            }}
             onBlur={getPreventHandler<FocusEvent, FocusEventHandler>(onFinishRename)}
-            onKeyDown={getPreventHandler<KeyboardEvent, KeyboardEventHandler>(handleKeyDown)}
+            onKeyDown={handleKeyDown}
           />
         ) : (
           title

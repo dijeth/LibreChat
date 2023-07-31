@@ -36,10 +36,9 @@ const uploadPdfs = async (userId, files) => {
   return pdfList;
 };
 
-const deletePdfs = async (userId, pdfs) => {
+const deletePdfs = async (userId, pdfIds) => {
   await getUserInfo(userId); // just for user_id validation and delay
-  const ids = pdfs.map(({ id }) => id);
-  pdfList = pdfList.filter(({ id }) => ids.includes(id));
+  pdfList = pdfList.filter(({ id }) => !pdfIds.includes(id));
   return pdfList;
 };
 

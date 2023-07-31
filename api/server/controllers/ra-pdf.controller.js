@@ -10,8 +10,8 @@ const getPdfListController = async (req, res) => {
 
 const deletePdfsController = async (req, res) => {
   try {
-    const { userId, pdfList } = req.body;
-    res.json(await deletePdfs(userId, pdfList));
+    const { userId, pdfIds } = req.query;
+    res.json(await deletePdfs(userId, pdfIds));
   } catch (err) {
     console.log(err);
     res.status(400).json({ err });

@@ -395,3 +395,31 @@ export const useUploadPdfsMutation = (): UseMutationResult<
     },
   });
 };
+
+export const useUpdatePdfMutation = (): UseMutationResult<
+  t.TPdf[],
+  unknown,
+  { pdf: t.TPdf; userId: string }
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation(({ userId, pdf }) => dataService.updatePdf(userId, pdf), {
+    onSuccess: (data: t.TPdf[], { userId }) => {
+      queryClient.setQueryData([QueryKeys.raPdfList, userId], data);
+    },
+  });
+};
+
+export const useDeletePdfsMutation = (): UseMutationResult<
+  t.TPdf[],
+  unknown,
+  { pdfIds: t.TPdf['id'][]; userId: string }
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation(({ userId, pdfIds }) => dataService.deletePdfs(userId, pdfIds), {
+    onSuccess: (data: t.TPdf[], { userId }) => {
+      queryClient.setQueryData([QueryKeys.raPdfList, userId], data);
+    },
+  });
+};

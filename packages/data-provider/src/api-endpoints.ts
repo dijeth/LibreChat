@@ -108,10 +108,10 @@ export const uploadPdfs = (): string => {
   return '/api/ra/pdf/upload';
 };
 
-export const deletePdfs = (): string => {
-  return '/api/ra/pdf/delete';
+export const deletePdfs = (userId: string, pdfIds: string[]): string => {
+  return `/api/ra/pdf/delete?userId=${userId}&${pdfIds.map((it) => `pdfIds=${it}`).join('&')}`;
 };
 
-export const updatePdf = (pdfId: string): string => {
-  return `/api/ra/pdf/${pdfId}/update`;
+export const updatePdf = (): string => {
+  return '/api/ra/pdf/update';
 };

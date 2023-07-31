@@ -134,8 +134,8 @@ export const uploadPdfs = (userId: string, files: File[]): Promise<t.TPdf[]> => 
   return request.postMultiPart(endpoints.uploadPdfs(), formData);
 };
 
-export const deletePdfs = (payload: t.TPdfListPayload): Promise<t.TPdf[]> =>
-  request.post(endpoints.deletePdfs(), payload);
+export const deletePdfs = (userId: string, pdfIds: string[]): Promise<t.TPdf[]> =>
+  request.delete(endpoints.deletePdfs(userId, pdfIds));
 
-export const updatePdf = (payload: t.TPdf): Promise<t.TPdf> =>
-  request.post(endpoints.updatePdf(payload.id), payload);
+export const updatePdf = (userId: string, pdf: t.TPdf): Promise<t.TPdf[]> =>
+  request.patch(endpoints.updatePdf(), { userId, pdf });

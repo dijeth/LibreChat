@@ -1,6 +1,8 @@
 import {
+  useDeletePdfsMutation,
   useGetPdfListQuery,
   useGetUserInfoQuery,
+  useUpdatePdfMutation,
   useUploadPdfsMutation,
 } from '@librechat/data-provider/src/react-query-service';
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
@@ -8,6 +10,7 @@ import { Spinner } from '../svg';
 import { Scrollbar } from '../ui/Scrollbar';
 import { FileTextIcon, UploadIcon } from 'lucide-react';
 import { ListItem } from '../ui/ListItem';
+import { TPdf } from '@librechat/data-provider/src/types';
 
 const PdfAssistantState = {
   LOADING: 'loading',
@@ -30,6 +33,8 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const pdfListQuery = useGetPdfListQuery(userId);
   const userInfoQuery = useGetUserInfoQuery(userId);
   const uploadPdfsMutation = useUploadPdfsMutation();
+  const deletePdfsMutation = useDeletePdfsMutation();
+  const updatePdfMutation = useUpdatePdfMutation();
 
   const toggleSelected = (id: string) => {
     if (selected.includes(id)) {
@@ -40,7 +45,13 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   };
 
   useEffect(() => {
-    const statuses = [pdfListQuery.status, userInfoQuery.status, uploadPdfsMutation.status];
+    const statuses = [
+      pdfListQuery.status,
+      userInfoQuery.status,
+      uploadPdfsMutation.status,
+      deletePdfsMutation.status,
+      updatePdfMutation.status,
+    ];
 
     if (statuses.some((it) => it === PdfAssistantState.LOADING)) {
       setState(PdfAssistantState.LOADING);
@@ -50,7 +61,13 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
     } else {
       setState(PdfAssistantState.IDLE);
     }
-  }, [pdfListQuery.status, userInfoQuery.status, uploadPdfsMutation.status]);
+  }, [
+    pdfListQuery.status,
+    userInfoQuery.status,
+    uploadPdfsMutation.status,
+    deletePdfsMutation.status,
+    updatePdfMutation.status,
+  ]);
 
   const handleUpload: ChangeEventHandler = (event: ChangeEvent) => {
     const target = event.target as HTMLInputElement;
@@ -62,6 +79,18 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
     const possibleFileCount = userInfoQuery.data!.maxPdfCount - pdfListQuery.data!.length;
     uploadPdfsMutation.mutate({ userId, files: Array.from(files).slice(0, possibleFileCount) });
     target.value = '';
+  };
+
+  const handleDelete = (userId: string, pdfIds: TPdf['id'][]) => {
+    deletePdfsMutation.mutate({ pdfIds, userId });
+
+    pdfIds.forEach((pdfId) => {
+      setSelected(selected.filter((it) => it !== pdfId));
+    });
+  };
+
+  const handleUpdate = (userId: string, pdf: TPdf) => {
+    updatePdfMutation.mutate({ pdf, userId });
   };
 
   if (state === PdfAssistantState.LOADING) {
@@ -93,13 +122,17 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
       </form>
       <Scrollbar>
         <ul>
-          {pdfListQuery.data?.map(({ id, filename }) => (
-            <li className="py-2" key={id}>
+          {pdfListQuery.data?.map((pdf) => (
+            <li className="py-2" key={pdf.id}>
               <ListItem
-                title={filename}
+                title={pdf.filename}
                 MainIcon={FileTextIcon}
-                selected={selected.includes(id)}
-                onSelect={() => toggleSelected(id)}
+                selected={selected.includes(pdf.id)}
+                onSelect={() => toggleSelected(pdf.id)}
+                onDelele={() => handleDelete(userId, [pdf.id])}
+                onRename={(filename: TPdf['filename']) =>
+                  handleUpdate(userId, { ...pdf, filename })
+                }
               />
             </li>
           ))}

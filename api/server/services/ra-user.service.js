@@ -2,7 +2,7 @@
 
 const { setTimeout } = require('node:timers/promises');
 
-const DELAY = 1000;
+const DELAY = 100;
 const INVALID_USER_ID = '0';
 
 const getUserInfo = async (userId) => {
