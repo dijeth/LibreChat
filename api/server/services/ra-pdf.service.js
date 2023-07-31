@@ -3,7 +3,7 @@
 const { getUserInfo } = require('./ra-user.service');
 
 let id = 0;
-const getId = () => id++;
+const getId = () => String(id++);
 
 const createPdf = (userId, data = {}) => {
   const id = getId();

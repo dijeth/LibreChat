@@ -11,6 +11,7 @@ import { Scrollbar } from '../ui/Scrollbar';
 import { FileTextIcon, UploadIcon } from 'lucide-react';
 import { ListItem } from '../ui/ListItem';
 import { TPdf } from '@librechat/data-provider/src/types';
+import { Button } from '../ui';
 
 const PdfAssistantState = {
   LOADING: 'loading',
@@ -83,10 +84,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
 
   const handleDelete = (userId: string, pdfIds: TPdf['id'][]) => {
     deletePdfsMutation.mutate({ pdfIds, userId });
-
-    pdfIds.forEach((pdfId) => {
-      setSelected(selected.filter((it) => it !== pdfId));
-    });
+    setSelected(pdfIds.length === 1 ? selected.filter((it) => it !== pdfIds[0]) : []);
   };
 
   const handleUpdate = (userId: string, pdf: TPdf) => {
@@ -120,6 +118,38 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
           onChange={handleUpload}
         />
       </form>
+      <div className="flex w-full justify-between gap-2">
+        <Button
+          className="w-1/3"
+          variant="outline"
+          size="sm"
+          title="Search selection"
+          disabled={!selected.length}
+          onClick={() => alert(selected)}
+        >
+          Search
+        </Button>
+        <Button
+          className="w-1/3"
+          variant="outline"
+          size="sm"
+          title="Delete selection"
+          disabled={!selected.length}
+          onClick={() => handleDelete(userId, selected)}
+        >
+          Delete
+        </Button>
+        <Button
+          className="w-1/3"
+          variant="outline"
+          size="sm"
+          title="Reset selection"
+          disabled={!selected.length}
+          onClick={() => setSelected([])}
+        >
+          Reset
+        </Button>
+      </div>
       <Scrollbar>
         <ul>
           {pdfListQuery.data?.map((pdf) => (
