@@ -14,6 +14,7 @@ import { TPdf } from '@librechat/data-provider/src/types';
 type ListItemProps = {
   title: string;
   selected?: boolean;
+  disabled?: boolean;
   MainIcon: LucideIcon;
   onDelele?: () => void;
   onRename?: (title: TPdf['filename']) => void;
@@ -30,6 +31,7 @@ const getPreventHandler = <T extends Event, K extends EventHandler<any>>(handler
 export const ListItem = ({
   title,
   selected = false,
+  disabled = false,
   MainIcon,
   onDelele,
   onRename,
@@ -69,7 +71,7 @@ export const ListItem = ({
 
   return (
     <div className="animate-flash group relative flex items-center gap-3 break-all rounded-md px-3 py-3 pr-14 hover:bg-gray-800">
-      <button className="p-1 hover:text-white" onClick={onSelect}>
+      <button disabled={disabled} className="p-1 hover:text-white" onClick={onSelect}>
         <MainIcon size={20} fill={selected ? 'white' : 'none'} />
       </button>
       <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis break-all">
@@ -91,13 +93,18 @@ export const ListItem = ({
       </div>
       <div className="visible absolute right-1 z-10 flex text-gray-300">
         <button
+          disabled={disabled}
           className="p-1 hover:text-white"
           onClick={renaming ? onFinishRename : renameHandler}
         >
           {renaming ? <CheckMark /> : <RenameIcon />}
         </button>
 
-        <button className="p-1 hover:text-white" onClick={renaming ? cancelHandler : onDelele}>
+        <button
+          disabled={disabled}
+          className="p-1 hover:text-white"
+          onClick={renaming ? cancelHandler : onDelele}
+        >
           {renaming ? <CrossIcon /> : <TrashIcon />}
         </button>
       </div>

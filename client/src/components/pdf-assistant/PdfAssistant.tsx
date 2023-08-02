@@ -6,7 +6,6 @@ import {
   useUploadPdfsMutation,
 } from '@librechat/data-provider/src/react-query-service';
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
-import { Spinner } from '../svg';
 import { Scrollbar } from '../ui/Scrollbar';
 import { FileTextIcon, UploadIcon } from 'lucide-react';
 import { ListItem } from '../ui/ListItem';
@@ -27,6 +26,31 @@ type PdfAssistantProps = {
   userId: string;
 };
 
+const PdfGroupButton = ({
+  title,
+  disabled,
+  hint,
+  handler,
+}: {
+  title: string;
+  disabled: boolean;
+  hint: string;
+  handler: () => void;
+}) => {
+  return (
+    <Button
+      className="w-1/3"
+      variant="outline"
+      size="sm"
+      title={hint}
+      disabled={disabled}
+      onClick={handler}
+    >
+      {title}
+    </Button>
+  );
+};
+
 export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
   const [selected, setSelected] = useState<string[]>([]);
@@ -44,6 +68,8 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
       setSelected([...selected, id]);
     }
   };
+
+  const disabled = state === PdfAssistantState.LOADING;
 
   useEffect(() => {
     const statuses = [
@@ -91,16 +117,16 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
     updatePdfMutation.mutate({ pdf, userId });
   };
 
-  if (state === PdfAssistantState.LOADING) {
-    return <Spinner />;
-  }
-
   if (state === PdfAssistantState.ERROR) {
     return <div className="text-red">Error</div>;
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-start justify-start gap-2 text-sm text-gray-100">
+    <div
+      className={`relative flex h-full w-full flex-col items-start justify-start gap-2 text-sm text-gray-100 ${
+        disabled ? 'opacity-30' : 'opacity-100'
+      }`}
+    >
       <form className="w-full">
         <label
           htmlFor="pdf"
@@ -114,41 +140,30 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
           id="pdf"
           type="file"
           accept=".pdf"
+          disabled={disabled}
           multiple
           onChange={handleUpload}
         />
       </form>
       <div className="flex w-full justify-between gap-2">
-        <Button
-          className="w-1/3"
-          variant="outline"
-          size="sm"
-          title="Search selection"
-          disabled={!selected.length}
-          onClick={() => alert(selected)}
-        >
-          Search
-        </Button>
-        <Button
-          className="w-1/3"
-          variant="outline"
-          size="sm"
-          title="Delete selection"
-          disabled={!selected.length}
-          onClick={() => handleDelete(userId, selected)}
-        >
-          Delete
-        </Button>
-        <Button
-          className="w-1/3"
-          variant="outline"
-          size="sm"
-          title="Reset selection"
-          disabled={!selected.length}
-          onClick={() => setSelected([])}
-        >
-          Reset
-        </Button>
+        <PdfGroupButton
+          title="Search"
+          hint="Search selection"
+          disabled={!selected.length || disabled}
+          handler={() => alert(selected)}
+        />
+        <PdfGroupButton
+          title="Delete"
+          hint="Delete selection"
+          disabled={!selected.length || disabled}
+          handler={() => handleDelete(userId, selected)}
+        />
+        <PdfGroupButton
+          title="Reset"
+          hint="Reset selection"
+          disabled={!selected.length || disabled}
+          handler={() => setSelected([])}
+        />
       </div>
       <Scrollbar>
         <ul>
@@ -158,6 +173,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
                 title={pdf.filename}
                 MainIcon={FileTextIcon}
                 selected={selected.includes(pdf.id)}
+                disabled={disabled}
                 onSelect={() => toggleSelected(pdf.id)}
                 onDelele={() => handleDelete(userId, [pdf.id])}
                 onRename={(filename: TPdf['filename']) =>
