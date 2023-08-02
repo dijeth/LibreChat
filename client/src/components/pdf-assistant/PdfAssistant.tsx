@@ -5,59 +5,14 @@ import {
   useUpdatePdfMutation,
   useUploadPdfsMutation,
 } from '@librechat/data-provider/src/react-query-service';
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, useState } from 'react';
 import { Scrollbar } from '../ui/Scrollbar';
 import { FileTextIcon, UploadIcon } from 'lucide-react';
 import { ListItem } from '../ui/ListItem';
 import { TPdf } from '@librechat/data-provider/src/types';
 import { Button } from '../ui';
-
-const PdfAssistantState = {
-  LOADING: 'loading',
-  ERROR: 'error',
-  IDLE: 'idle',
-} as const;
-
-const ERROR_DELAY = 2000;
-
-type TPdfAssistantState = (typeof PdfAssistantState)[keyof typeof PdfAssistantState];
-
-type PdfAssistantProps = {
-  userId: string;
-};
-
-const getQueryStatusLine = (queries: { status: string }[]): string =>
-  queries.map(({ status }) => status).join(' ');
-
-const getPdfAssistantState = (statusLine: string): TPdfAssistantState => {
-  for (const status of [PdfAssistantState.ERROR, PdfAssistantState.LOADING]) {
-    if (statusLine.includes(status)) {
-      return status;
-    }
-  }
-
-  return PdfAssistantState.IDLE;
-};
-
-const useLazyLoading = (isLoading: boolean, handleLoading: () => void, delay = 500) => {
-  const [timer, setTimer] = useState<any>(null);
-
-  useEffect(() => {
-    if (isLoading) {
-      if (!timer) {
-        setTimer(
-          setTimeout(() => {
-            setTimer(null);
-            handleLoading();
-          }, delay),
-        );
-      }
-    } else {
-      clearTimeout(timer);
-      setTimer(null);
-    }
-  }, [isLoading]);
-};
+import { useQueryStatus } from './hooks';
+import { PdfAssistantState, TPdfAssistantState } from './types';
 
 const PdfGroupButton = ({
   title,
@@ -84,6 +39,10 @@ const PdfGroupButton = ({
   );
 };
 
+type PdfAssistantProps = {
+  userId: string;
+};
+
 export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
   const [selected, setSelected] = useState<string[]>([]);
@@ -94,6 +53,25 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const deletePdfsMutation = useDeletePdfsMutation();
   const updatePdfMutation = useUpdatePdfMutation();
 
+  useQueryStatus({
+    queries: [
+      pdfListQuery,
+      userInfoQuery,
+      uploadPdfsMutation,
+      deletePdfsMutation,
+      updatePdfMutation,
+    ],
+    onError() {
+      setState(PdfAssistantState.ERROR);
+    },
+    onLoading() {
+      setState(PdfAssistantState.LOADING);
+    },
+    onSuccess() {
+      setState(PdfAssistantState.IDLE);
+    },
+  });
+
   const toggleSelected = (id: string) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((it) => it !== id));
@@ -103,32 +81,6 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   };
 
   const disabled = state === PdfAssistantState.LOADING;
-  const statusLine = getQueryStatusLine([
-    pdfListQuery,
-    userInfoQuery,
-    uploadPdfsMutation,
-    deletePdfsMutation,
-    updatePdfMutation,
-  ]);
-
-  useLazyLoading(getPdfAssistantState(statusLine) === PdfAssistantState.LOADING, () =>
-    setState(PdfAssistantState.LOADING),
-  );
-
-  useEffect(() => {
-    const pdfAssistantState = getPdfAssistantState(statusLine);
-
-    switch (pdfAssistantState) {
-      case PdfAssistantState.ERROR:
-        setState(pdfAssistantState);
-        setTimeout(() => setState(PdfAssistantState.IDLE), ERROR_DELAY);
-        break;
-
-      case PdfAssistantState.IDLE:
-        setState(pdfAssistantState);
-        break;
-    }
-  }, [statusLine]);
 
   const handleUpload: ChangeEventHandler = (event: ChangeEvent) => {
     const target = event.target as HTMLInputElement;
