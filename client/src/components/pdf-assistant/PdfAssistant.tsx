@@ -13,6 +13,7 @@ import { TPdf } from '@librechat/data-provider/src/types';
 import { Button } from '../ui';
 import { useQueryStatus } from './hooks';
 import { PdfAssistantState, TPdfAssistantState } from './types';
+import { Spinner } from '../svg';
 
 const PdfGroupButton = ({
   title,
@@ -108,68 +109,71 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   }
 
   return (
-    <div
-      className={`relative flex h-full w-full flex-col items-start justify-start gap-2 text-sm text-gray-100 ${
-        disabled ? 'opacity-30' : 'opacity-100'
-      }`}
-    >
-      <form className="w-full">
-        <label
-          htmlFor="pdf"
-          className="mb-2 flex h-11 flex-shrink-0 flex-grow cursor-pointer items-center gap-3 rounded-md border border-white/20 px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
-        >
-          <UploadIcon size={20} strokeWidth={2} />
-          Upload a PDF
-        </label>
-        <input
-          className="hidden"
-          id="pdf"
-          type="file"
-          accept=".pdf"
-          disabled={disabled}
-          multiple
-          onChange={handleUpload}
-        />
-      </form>
-      <div className="flex w-full justify-between gap-2">
-        <PdfGroupButton
-          title="Search"
-          hint="Search selection"
-          disabled={!selected.length || disabled}
-          handler={() => alert(selected)}
-        />
-        <PdfGroupButton
-          title="Delete"
-          hint="Delete selection"
-          disabled={!selected.length || disabled}
-          handler={() => handleDelete(userId, selected)}
-        />
-        <PdfGroupButton
-          title="Reset"
-          hint="Reset selection"
-          disabled={!selected.length || disabled}
-          handler={() => setSelected([])}
-        />
+    <>
+      <div
+        className={`relative flex h-full w-full flex-col items-start justify-start gap-2 text-sm text-gray-100 ${
+          disabled ? 'opacity-30' : 'opacity-100'
+        }`}
+      >
+        <form className="w-full">
+          <label
+            htmlFor="pdf"
+            className="mb-2 flex h-11 flex-shrink-0 flex-grow cursor-pointer items-center gap-3 rounded-md border border-white/20 px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
+          >
+            <UploadIcon size={20} strokeWidth={2} />
+            Upload a PDF
+          </label>
+          <input
+            className="hidden"
+            id="pdf"
+            type="file"
+            accept=".pdf"
+            disabled={disabled}
+            multiple
+            onChange={handleUpload}
+          />
+        </form>
+        <div className="flex w-full justify-between gap-2">
+          <PdfGroupButton
+            title="Search"
+            hint="Search selection"
+            disabled={!selected.length || disabled}
+            handler={() => alert(selected)}
+          />
+          <PdfGroupButton
+            title="Delete"
+            hint="Delete selection"
+            disabled={!selected.length || disabled}
+            handler={() => handleDelete(userId, selected)}
+          />
+          <PdfGroupButton
+            title="Reset"
+            hint="Reset selection"
+            disabled={!selected.length || disabled}
+            handler={() => setSelected([])}
+          />
+        </div>
+        <Scrollbar>
+          <ul>
+            {pdfListQuery.data?.map((pdf) => (
+              <li className="py-2" key={pdf.id}>
+                <ListItem
+                  title={pdf.filename}
+                  MainIcon={FileTextIcon}
+                  selected={selected.includes(pdf.id)}
+                  disabled={disabled}
+                  onSelect={() => toggleSelected(pdf.id)}
+                  onDelele={() => handleDelete(userId, [pdf.id])}
+                  onRename={(filename: TPdf['filename']) =>
+                    handleUpdate(userId, { ...pdf, filename })
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        </Scrollbar>
       </div>
-      <Scrollbar>
-        <ul>
-          {pdfListQuery.data?.map((pdf) => (
-            <li className="py-2" key={pdf.id}>
-              <ListItem
-                title={pdf.filename}
-                MainIcon={FileTextIcon}
-                selected={selected.includes(pdf.id)}
-                disabled={disabled}
-                onSelect={() => toggleSelected(pdf.id)}
-                onDelele={() => handleDelete(userId, [pdf.id])}
-                onRename={(filename: TPdf['filename']) =>
-                  handleUpdate(userId, { ...pdf, filename })
-                }
-              />
-            </li>
-          ))}
-        </ul>
-      </Scrollbar>
-    </div>
+      {state === PdfAssistantState.LOADING ? <Spinner className="absolute" /> : ''}
+    </>
   );
 };
