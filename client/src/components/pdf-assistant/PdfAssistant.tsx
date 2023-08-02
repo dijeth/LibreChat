@@ -26,6 +26,39 @@ type PdfAssistantProps = {
   userId: string;
 };
 
+const getQueryStatusLine = (queries: { status: string }[]): string =>
+  queries.map(({ status }) => status).join(' ');
+
+const getPdfAssistantState = (statusLine: string): TPdfAssistantState => {
+  for (const status of [PdfAssistantState.ERROR, PdfAssistantState.LOADING]) {
+    if (statusLine.includes(status)) {
+      return status;
+    }
+  }
+
+  return PdfAssistantState.IDLE;
+};
+
+const useLazyLoading = (isLoading: boolean, handleLoading: () => void, delay = 500) => {
+  const [timer, setTimer] = useState<any>(null);
+
+  useEffect(() => {
+    if (isLoading) {
+      if (!timer) {
+        setTimer(
+          setTimeout(() => {
+            setTimer(null);
+            handleLoading();
+          }, delay),
+        );
+      }
+    } else {
+      clearTimeout(timer);
+      setTimer(null);
+    }
+  }, [isLoading]);
+};
+
 const PdfGroupButton = ({
   title,
   disabled,
@@ -70,31 +103,32 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   };
 
   const disabled = state === PdfAssistantState.LOADING;
+  const statusLine = getQueryStatusLine([
+    pdfListQuery,
+    userInfoQuery,
+    uploadPdfsMutation,
+    deletePdfsMutation,
+    updatePdfMutation,
+  ]);
+
+  useLazyLoading(getPdfAssistantState(statusLine) === PdfAssistantState.LOADING, () =>
+    setState(PdfAssistantState.LOADING),
+  );
 
   useEffect(() => {
-    const statuses = [
-      pdfListQuery.status,
-      userInfoQuery.status,
-      uploadPdfsMutation.status,
-      deletePdfsMutation.status,
-      updatePdfMutation.status,
-    ];
+    const pdfAssistantState = getPdfAssistantState(statusLine);
 
-    if (statuses.some((it) => it === PdfAssistantState.LOADING)) {
-      setState(PdfAssistantState.LOADING);
-    } else if (statuses.some((it) => it === PdfAssistantState.ERROR)) {
-      setState(PdfAssistantState.ERROR);
-      setTimeout(() => setState(PdfAssistantState.IDLE), ERROR_DELAY);
-    } else {
-      setState(PdfAssistantState.IDLE);
+    switch (pdfAssistantState) {
+      case PdfAssistantState.ERROR:
+        setState(pdfAssistantState);
+        setTimeout(() => setState(PdfAssistantState.IDLE), ERROR_DELAY);
+        break;
+
+      case PdfAssistantState.IDLE:
+        setState(pdfAssistantState);
+        break;
     }
-  }, [
-    pdfListQuery.status,
-    userInfoQuery.status,
-    uploadPdfsMutation.status,
-    deletePdfsMutation.status,
-    updatePdfMutation.status,
-  ]);
+  }, [statusLine]);
 
   const handleUpload: ChangeEventHandler = (event: ChangeEvent) => {
     const target = event.target as HTMLInputElement;
