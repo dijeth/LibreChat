@@ -280,6 +280,7 @@ export type TPdf = {
   id: string;
   userId: string;
   filename: string;
+  title: string;
   author?: string;
   articleName?: string;
   tag?: string;

@@ -13,6 +13,7 @@ const createPdf = (userId, data = {}) => {
     id,
     userId: userId,
     filename: `filename-${userId}-${id}.pdf`,
+    title: `filename-${userId}-${id}.pdf`,
     author: `author-${id}`,
     articleName: `articleName-${id}`,
     tag: `tag-${id}`,
