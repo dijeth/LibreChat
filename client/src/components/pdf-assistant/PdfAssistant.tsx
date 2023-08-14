@@ -1,3 +1,4 @@
+import { useSetRecoilState } from 'recoil';
 import {
   useDeletePdfsMutation,
   useGetPdfListQuery,
@@ -14,6 +15,7 @@ import { Button } from '../ui';
 import { useQueryStatus } from './hooks';
 import { PdfAssistantState, TPdfAssistantState } from './types';
 import { Spinner } from '../svg';
+import store from '~/store';
 
 const PdfGroupButton = ({
   title,
@@ -47,6 +49,8 @@ type PdfAssistantProps = {
 export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
   const [selected, setSelected] = useState<string[]>([]);
+
+  const setPdf = useSetRecoilState<TPdf | null>(store.pdf);
 
   const pdfListQuery = useGetPdfListQuery(userId);
   const userInfoQuery = useGetUserInfoQuery(userId);
@@ -158,15 +162,14 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
             {pdfListQuery.data?.map((pdf) => (
               <li className="py-2" key={pdf.id}>
                 <ListItem
-                  title={pdf.filename}
+                  title={pdf.title}
                   MainIcon={FileTextIcon}
                   selected={selected.includes(pdf.id)}
                   disabled={disabled}
                   onSelect={() => toggleSelected(pdf.id)}
                   onDelele={() => handleDelete(userId, [pdf.id])}
-                  onRename={(filename: TPdf['filename']) =>
-                    handleUpdate(userId, { ...pdf, filename })
-                  }
+                  onRename={(title: TPdf['title']) => handleUpdate(userId, { ...pdf, title })}
+                  onClick={() => setPdf(pdf)}
                 />
               </li>
             ))}

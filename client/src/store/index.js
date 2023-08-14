@@ -8,6 +8,7 @@ import search from './search';
 import preset from './preset';
 import token from './token';
 import lang from './language';
+import pdf from './pdf';
 
 export default {
   ...conversation,
@@ -20,4 +21,5 @@ export default {
   ...preset,
   ...token,
   ...lang,
+  ...pdf,
 };
