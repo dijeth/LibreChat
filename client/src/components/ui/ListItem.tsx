@@ -19,6 +19,7 @@ type ListItemProps = {
   onDelele?: () => void;
   onRename?: (title: TPdf['filename']) => void;
   onSelect?: () => void;
+  onClick?: () => void;
 };
 
 const getPreventHandler = <T extends Event, K extends EventHandler<any>>(handler: Function): K => {
@@ -36,6 +37,7 @@ export const ListItem = ({
   onDelele,
   onRename,
   onSelect,
+  onClick,
 }: ListItemProps) => {
   const [renaming, setRenaming] = useState(false);
   const [titleInput, setTitleInput] = useState(title);
@@ -88,7 +90,9 @@ export const ListItem = ({
             onKeyDown={handleKeyDown}
           />
         ) : (
-          title
+          <span className="cursor-pointer" onClick={onClick}>
+            {title}
+          </span>
         )}
       </div>
       <div className="visible absolute right-1 z-10 flex text-gray-300">
