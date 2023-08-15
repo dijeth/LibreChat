@@ -33,7 +33,11 @@ const getPdfList = async (userId) => {
 const uploadPdfs = async (userId, files) => {
   const { maxPdfCount } = await getUserInfo(userId);
   pdfList = pdfList
-    .concat(files.map((it) => createPdf(userId, { filename: it.originalname })))
+    .concat(
+      files.map((it) =>
+        createPdf(userId, { filename: `/pdf/${it.filename}`, title: it.originalname }),
+      ),
+    )
     .slice(0, maxPdfCount);
 
   await setTimeout(2000);

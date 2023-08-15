@@ -1,5 +1,5 @@
 const express = require('express');
-const upload = require('multer')({ dest: './uploads/' });
+const multer = require('multer');
 const { getUserInfoController } = require('../controllers/ra-user.controller');
 const {
   getPdfListController,
@@ -7,6 +7,17 @@ const {
   deletePdfsController,
   updatePdfController,
 } = require('../controllers/ra-pdf.controller');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './client/public/pdf/');
+  },
+  filename: function (req, file, cb) {
+    const extension = file.mimetype.split('/').pop();
+    cb(null, `${Date.now()}.${extension}`);
+  },
+});
+const upload = multer({ storage });
 
 const router = express.Router();
 

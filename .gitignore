@@ -78,4 +78,4 @@ auth.json
 /images
 
 # pdf uploads
-/uploads
+/client/public/pdf
