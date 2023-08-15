@@ -24,10 +24,16 @@ type LayoutSplitterProps = {
 };
 
 export const LayoutSplitter = ({ LeftComponent, RightComponent }: LayoutSplitterProps) => {
+  const initial =
+    Number(localStorage.getItem('initialPosition')) || document.documentElement.clientWidth / 2;
+
   const { isDragging, position, separatorProps } = useResizable({
     axis: 'x',
     reverse: true,
+    initial,
   });
+
+  localStorage.setItem('initialPosition', String(position));
 
   return (
     <div className="flex h-full w-full overflow-hidden">
