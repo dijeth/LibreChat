@@ -29,6 +29,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@headlessui/react": "^1.7.13",
+    "@librechat/data-provider": "*",
     "@radix-ui/react-alert-dialog": "^1.0.2",
     "@radix-ui/react-checkbox": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.2",
@@ -62,6 +63,7 @@
     "react-hook-form": "^7.43.9",
     "react-lazy-load": "^4.0.1",
     "react-markdown": "^8.0.6",
+    "react-resizable-layout": "^0.6.0",
     "react-router-dom": "^6.11.2",
     "react-string-replace": "^1.1.0",
     "react-textarea-autosize": "^8.4.0",
@@ -76,8 +78,7 @@
     "tailwind-merge": "^1.9.1",
     "tailwindcss-animate": "^1.0.5",
     "tailwindcss-radix": "^2.8.0",
-    "url": "^0.11.0",
-    "@librechat/data-provider": "*"
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.20.7",

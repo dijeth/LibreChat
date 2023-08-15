@@ -13,6 +13,7 @@ import { Outlet } from 'react-router-dom';
 import store from '~/store';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useSetRecoilState } from 'recoil';
+import { WithPdfViewer } from '../components/pdf-assistant/WithPdfViewer';
 
 export default function Root() {
   const [navVisible, setNavVisible] = useState(() => {
@@ -65,11 +66,13 @@ export default function Root() {
     <>
       <div className="flex h-screen">
         <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
-        <div className="flex h-full w-full flex-1 flex-col bg-gray-50">
-          <div className="transition-width relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden bg-white pt-10 dark:bg-gray-800 md:pt-0">
-            <MobileNav setNavVisible={setNavVisible} />
-            <Outlet />
-          </div>
+        <div className="flex h-full w-full flex-1 flex-col bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100">
+          <WithPdfViewer>
+            <div className="transition-width relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden pt-10 md:pt-0">
+              <MobileNav setNavVisible={setNavVisible} />
+              <Outlet />
+            </div>
+          </WithPdfViewer>
         </div>
       </div>
       <MessageHandler />
