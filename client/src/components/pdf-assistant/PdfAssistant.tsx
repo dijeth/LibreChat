@@ -50,7 +50,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
   const [state, setState] = useState<TPdfAssistantState>(PdfAssistantState.IDLE);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const setPdf = useSetRecoilState<TPdf | null>(store.pdf);
+  const setPdf = useSetRecoilState<string | null>(store.pdf);
 
   const pdfListQuery = useGetPdfListQuery(userId);
   const userInfoQuery = useGetUserInfoQuery(userId);
@@ -169,7 +169,7 @@ export const PdfAssistant = ({ userId }: PdfAssistantProps) => {
                   onSelect={() => toggleSelected(pdf.id)}
                   onDelele={() => handleDelete(userId, [pdf.id])}
                   onRename={(title: TPdf['title']) => handleUpdate(userId, { ...pdf, title })}
-                  onClick={() => setPdf(pdf)}
+                  onClick={() => setPdf(pdf.id)}
                 />
               </li>
             ))}

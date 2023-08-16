@@ -67,7 +67,7 @@ export default function Root() {
       <div className="flex h-screen">
         <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
         <div className="flex h-full w-full flex-1 flex-col bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100">
-          <WithPdfViewer>
+          <WithPdfViewer userId="1">
             <div className="transition-width relative flex h-full w-full flex-1 flex-col items-stretch overflow-hidden pt-10 md:pt-0">
               <MobileNav setNavVisible={setNavVisible} />
               <Outlet />
